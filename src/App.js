@@ -137,12 +137,14 @@ function App() {
 
   // Custom touch handler functions
   const handleMinutesTouch = (e) => {
+    e.preventDefault();
     let startY = e.touches[0].clientY;
     let currentMinutes = minutes;
 
     const onTouchMove = (moveEvent) => {
+      moveEvent.preventDefault();
       const deltaY = startY - moveEvent.touches[0].clientY;
-      if (Math.abs(deltaY) > 20) { // Sensitivity threshold
+      if (Math.abs(deltaY) > 20) {
         if (deltaY > 0) {
           // Swiping up
           currentMinutes = Math.min(currentMinutes + 1, 59);
@@ -161,17 +163,19 @@ function App() {
       window.removeEventListener('touchend', onTouchEnd);
     };
 
-    window.addEventListener('touchmove', onTouchMove);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('touchend', onTouchEnd);
   };
 
   const handleSecondsTouch = (e) => {
+    e.preventDefault();
     let startY = e.touches[0].clientY;
     let currentSeconds = seconds;
 
     const onTouchMove = (moveEvent) => {
+      moveEvent.preventDefault();
       const deltaY = startY - moveEvent.touches[0].clientY;
-      if (Math.abs(deltaY) > 20) { // Sensitivity threshold
+      if (Math.abs(deltaY) > 20) {
         if (deltaY > 0) {
           // Swiping up
           currentSeconds = currentSeconds + 1;
@@ -196,7 +200,7 @@ function App() {
       window.removeEventListener('touchend', onTouchEnd);
     };
 
-    window.addEventListener('touchmove', onTouchMove);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('touchend', onTouchEnd);
   };
 
@@ -206,19 +210,29 @@ function App() {
         <div className="timer-setup">
           <h1>Set Timer</h1>
           <div className="time-inputs">
-            <div
-              className="input-group touch-input"
-              onTouchStart={handleMinutesTouch}
-            >
-              <div className="value-display">{minutes < 10 ? '0' : ''}{minutes}</div>
-              <label>minutes</label>
+            <div className="input-group">
+              <label className="input-label">Minutes</label>
+              <div
+                className="touch-input"
+                onTouchStart={handleMinutesTouch}
+              >
+                <div className="value-display">
+                  {minutes < 10 ? '0' : ''}
+                  {minutes}
+                </div>
+              </div>
             </div>
-            <div
-              className="input-group touch-input"
-              onTouchStart={handleSecondsTouch}
-            >
-              <div className="value-display">{seconds < 10 ? '0' : ''}{seconds}</div>
-              <label>seconds</label>
+            <div className="input-group">
+              <label className="input-label">Seconds</label>
+              <div
+                className="touch-input"
+                onTouchStart={handleSecondsTouch}
+              >
+                <div className="value-display">
+                  {seconds < 10 ? '0' : ''}
+                  {seconds}
+                </div>
+              </div>
             </div>
           </div>
           <button
@@ -231,7 +245,6 @@ function App() {
         </div>
       ) : (
         <div className={`countdown ${showAlarm ? 'alarm' : ''}`}>
-          {/* Display the animation only when the timer is running and not in alarm state */}
           {isRunning && !showAlarm && vehicleAnimationData && (
             <Lottie
               animationData={vehicleAnimationData}

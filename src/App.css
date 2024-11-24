@@ -94,13 +94,61 @@ button:active {
   position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   align-items: center;
-  justify-content: center;
   width: 100%;
   height: 100vh;
   background-color: white;
   color: black;
   overflow: hidden;
+}
+
+.controls {
+  width: 100%;
+  padding: 20px;
+  padding-bottom: 40px;
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+}
+
+.time-display {
+  margin-bottom: 10px;
+}
+
+.time-display .numbers {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #333;
+  text-shadow: none;
+}
+
+.cancel-button {
+  background-color: #ff4444;
+  color: white;
+  padding: 15px 40px;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.cancel-button:active {
+  transform: scale(0.95);
+}
+
+.background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  filter: brightness(0) invert(1);
 }
 
 .progress-bar {
@@ -110,25 +158,13 @@ button:active {
   width: 100%;
   height: 100%;
   background-color: #4CAF50;
-  z-index: 1;
+  z-index: 0;
   transform-origin: bottom;
 }
 
-.background-animation {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  pointer-events: none;
-  filter: brightness(0) invert(1);
-}
-
-.time-display,
-.cancel-button {
+.controls {
   position: relative;
-  z-index: 3;
+  z-index: 2;
 }
 
 @keyframes progressBarDecrease {
@@ -140,14 +176,15 @@ button:active {
   }
 }
 
-.time-display .numbers {
-  font-size: 8rem;
-  font-weight: bold;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+.countdown.alarm {
+  animation: alarmFlash 3s ease-in-out;
 }
 
-/* Alarm animation */
+.countdown.alarm .progress-bar,
+.countdown.alarm .background-animation {
+  display: none;
+}
+
 @keyframes alarmFlash {
   0%,
   100% {
@@ -158,15 +195,6 @@ button:active {
   83.333% {
     background-color: #ff4444;
   }
-}
-
-.countdown.alarm {
-  animation: alarmFlash 3s ease-in-out;
-}
-
-.countdown.alarm .progress-bar,
-.countdown.alarm .background-animation {
-  display: none;
 }
 
 @media (max-width: 600px) {
@@ -187,4 +215,49 @@ button:active {
   .input-label {
     font-size: 1.5rem;
   }
+
+  .controls {
+    padding: 15px;
+    padding-bottom: 30px;
+  }
+
+  .time-display .numbers {
+    font-size: 4rem;
+  }
+}
+
+/* Adjust Button Styles */
+.adjust-button {
+  display: none; /* Hidden by default */
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Show buttons when hovering over touch-input (desktop) */
+@media (pointer: fine) {
+  .touch-input:hover .adjust-button {
+    display: block;
+  }
+}
+
+/* Positioning of the Plus and Minus Buttons */
+.adjust-button-up {
+  top: 5px;
+  right: 5px;
+}
+
+.adjust-button-down {
+  bottom: 5px;
+  right: 5px;
+}
+
+/* Ensure buttons are above the value display */
+.touch-input {
+  position: relative;
 }

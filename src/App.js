@@ -204,12 +204,48 @@ function App() {
     window.addEventListener('touchend', onTouchEnd);
   };
 
+  // Functions to handle increase and decrease for minutes
+  const increaseMinutes = (e) => {
+    e.stopPropagation(); // Prevent touch event from triggering
+    setMinutes((prevMinutes) => Math.min(prevMinutes + 1, 59));
+    setTimeInSeconds((prevMinutes) => (Math.min(prevMinutes + 1, 59)) * 60 + seconds);
+  };
+
+  const decreaseMinutes = (e) => {
+    e.stopPropagation();
+    setMinutes((prevMinutes) => Math.max(prevMinutes - 1, 0));
+    setTimeInSeconds((prevMinutes) => (Math.max(prevMinutes - 1, 0)) * 60 + seconds);
+  };
+
+  // Functions to handle increase and decrease for seconds
+  const increaseSeconds = (e) => {
+    e.stopPropagation();
+    setSeconds((prevSeconds) => {
+      const newSeconds = prevSeconds + 1;
+      if (newSeconds > 59) return 0;
+      return newSeconds;
+    });
+    setTimeInSeconds(minutes * 60 + ((seconds + 1) % 60));
+  };
+
+  const decreaseSeconds = (e) => {
+    e.stopPropagation();
+    setSeconds((prevSeconds) => {
+      const newSeconds = prevSeconds - 1;
+      if (newSeconds < 0) return 59;
+      return newSeconds;
+    });
+    setTimeInSeconds(minutes * 60 + ((seconds - 1 + 60) % 60));
+  };
+
   return (
     <div className="App">
       {!isRunning && !showAlarm ? (
         <div className="timer-setup">
           <h1>Set Timer</h1>
+          <h3>Tap and drag to set time.</h3>
           <div className="time-inputs">
+            {/* Minutes Input */}
             <div className="input-group">
               <label className="input-label">Minutes</label>
               <div
@@ -220,8 +256,23 @@ function App() {
                   {minutes < 10 ? '0' : ''}
                   {minutes}
                 </div>
+                {/* Plus and Minus Buttons */}
+                <button
+                  className="adjust-button adjust-button-up"
+                  onClick={increaseMinutes}
+                >
+                  +
+                </button>
+                <button
+                  className="adjust-button adjust-button-down"
+                  onClick={decreaseMinutes}
+                >
+                  -
+                </button>
               </div>
             </div>
+
+            {/* Seconds Input */}
             <div className="input-group">
               <label className="input-label">Seconds</label>
               <div
@@ -232,6 +283,19 @@ function App() {
                   {seconds < 10 ? '0' : ''}
                   {seconds}
                 </div>
+                {/* Plus and Minus Buttons */}
+                <button
+                  className="adjust-button adjust-button-up"
+                  onClick={increaseSeconds}
+                >
+                  +
+                </button>
+                <button
+                  className="adjust-button adjust-button-down"
+                  onClick={decreaseSeconds}
+                >
+                  -
+                </button>
               </div>
             </div>
           </div>
@@ -262,16 +326,18 @@ function App() {
                   }
             }
           />
-          <div className="time-display">
-            <span className="numbers">
-              {Math.floor(timeInSeconds / 60)}:
-              {timeInSeconds % 60 < 10 ? '0' : ''}
-              {timeInSeconds % 60}
-            </span>
+          <div className="controls">
+            <div className="time-display">
+              <span className="numbers">
+                {Math.floor(timeInSeconds / 60)}:
+                {timeInSeconds % 60 < 10 ? '0' : ''}
+                {timeInSeconds % 60}
+              </span>
+            </div>
+            <button className="cancel-button" onClick={resetTimer}>
+              Cancel
+            </button>
           </div>
-          <button className="cancel-button" onClick={resetTimer}>
-            Cancel
-          </button>
         </div>
       )}
     </div>
